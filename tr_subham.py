@@ -45,4 +45,4 @@ def get_receipts():
 
 
 if __name__ == "__main__":
-    app.run(debug=True , port=5000,host='192.168.81.52')#, host= '192.168.81.55',192.168.202.64)
+    app.run(debug=True )#,port=5000, host= '192.168.81.55',192.168.202.64)
