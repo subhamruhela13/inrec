@@ -20,13 +20,12 @@
         </div>
         <button type="button" class="btn btn-primary" id="createInvoice">Create Invoice</button>
         <button type="button" class="btn btn-success" id="createReceipt">Create Receipt</button>
+        <button type="button" class="btn btn-info" id="print">Print</button>
         <hr>
-        <div>
-            <h2>Invoices</h2>
-            <ul id="invoiceList"></ul>
-            <h2>Receipts</h2>
-            <ul id="receiptList"></ul>
-        </div>
+        <h2>Invoices</h2>
+        <ul id="invoiceList"></ul>
+        <h2>Receipts</h2>
+        <ul id="receiptList"></ul>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -44,8 +43,7 @@
                 })
             }).then(response => response.json())
               .then(data => {
-                  document.getElementById('invoiceList').innerHTML += `<li>Invoice ID: #${data.id}</li>`;
-                  //, Customer Name: ${data.customer_name}, Amount: ${data.amount}
+                  document.getElementById('invoiceList').innerHTML += `<li>Invoice ID: ${data.id}, Customer Name: ${data.customer_name}, Amount: ${data.amount}</li>`;
               });
         });
 
@@ -63,10 +61,14 @@
                 })
             }).then(response => response.json())
               .then(data => {
-                  document.getElementById('receiptList').innerHTML += `<li>Receipt ID: ${data.id}</li>`;
-                  //, Customer Name: ${data.customer_name}, Amount Paid: ${data.amount_paid}
+                  document.getElementById('receiptList').innerHTML += `<li>Receipt ID: ${data.id}, Customer Name: ${data.customer_name}, Amount Paid: ${data.amount_paid}</li>`;
               });
+        });
+
+        document.getElementById('print').addEventListener('click', function() {
+            window.print();
         });
     </script>
 </body>
 </html>
+
