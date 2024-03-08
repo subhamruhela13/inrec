@@ -121,6 +121,8 @@
 </head>
 
 <body>
+	{{ customer_details }}
+	{{ product_details }}
 	<div class="col-md-12">
 		<div class="row">
 			<div class="receipt-main col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
@@ -128,10 +130,9 @@
 					<div class="receipt-header">
 						<div class="col-xs-6 col-sm-6 col-md-6">
 							<div class="receipt-left">
-								<img class="img-responsive" alt="Logo"
-									src="static/logo.png"
-									style="width: 50%; margin-top:20px;"> 
-									<!-- " border-radius: 43px;"> -->
+								<img class="img-responsive" alt="Logo" src="static/logo.png"
+									style="width: 50%; margin-top:20px;">
+								<!-- " border-radius: 43px;"> -->
 							</div>
 						</div>
 						<div class="col-xs-6 col-sm-6 col-md-6 text-right">
@@ -140,7 +141,8 @@
 								<p>+91 99137 42718<i class="fa fa-phone"></i></p>
 								<p><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
 										data-cfemail="7d1e12100d1c13043d1a101c1411531e1210">[email&#160;protected]</a>
-									<i class="fa fa-envelope-o"></i></p>
+									<i class="fa fa-envelope-o"></i>
+								</p>
 								<p>Surat, Gujarat<i class="fa fa-location-arrow"></i></p>
 							</div>
 						</div>
@@ -150,17 +152,18 @@
 					<div class="receipt-header receipt-header-mid">
 						<div class="col-xs-8 col-sm-8 col-md-8 text-left">
 							<div class="receipt-right">
-								<h5>Customer Name </h5>
-								<p><b>Mobile :</b> +1 12345-4569</p>
-								<p><b>Email :</b> <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-										data-cfemail="0665737572696b637446616b676f6a2865696b">[email&#160;protected]</a>
+								<h5>{{ customer_details["customerName"] }}</h5>
+								<p><b>Mobile :</b>{{ customer_details["customerNumber"] }}</p>
+								<p><b>Email :</b>{{ customer_details["customerEmail"] }}
+									<!-- <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+										data-cfemail="0665737572696b637446616b676f6a2865696b">[email&#160;protected]</a> -->
 								</p>
-								<p><b>Address :</b> New York, USA</p>
+								<p><b>Address :</b> {{ customer_details["customerAdd"] }}</p>
 							</div>
 						</div>
 						<div class="col-xs-4 col-sm-4 col-md-4">
 							<div class="receipt-left">
-								<h3>INVOICE # 102</h3>
+								<!-- <h3>QUOTATION #{{ id }}</h3> -->
 							</div>
 						</div>
 					</div>
@@ -176,56 +179,15 @@
 							</tr>
 						</thead>
 						<tbody>
+							{% for product_id, product_info in product_details.items() %}
 							<tr>
-								<td class="col-md-9">Payment for August 2016</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 15,000/-</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 15,000/-</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 15,000/-</td>
+								<!-- <td>{{ product_id }}</td> -->
+								<td class="col-md-9">{{ product_info[0] }}</td>
+								<td class="col-md-3"><i class="fa fa-inr"></i>{{ product_info[1] }}</td>
+								<td class="col-md-3"><i class="fa fa-inr"></i>{{ product_info[2] }}</td>
+								<td class="col-md-3"><i class="fa fa-inr"></i>{{ product_info[3] }}</td>
 							</tr>
-							<tr>
-								<td class="col-md-9">Payment for June 2016</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 6,00/-</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 15,000/-</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 15,000/-</td>
-							</tr>
-							<tr>
-								<td class="col-md-9">Payment for May 2016</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 35,00/-</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 15,000/-</td>
-								<td class="col-md-3"><i class="fa fa-inr"></i> 15,000/-</td>
-							</tr>
-							<tr>
-								<td class="text-right">
-									<p>
-										<strong>Total Amount: </strong>
-									</p>
-									<p>
-										<strong>Late Fees: </strong>
-									</p>
-									<p>
-										<strong>Payable Amount: </strong>
-									</p>
-									<p>
-										<strong>Balance Due: </strong>
-									</p>
-								</td>
-								<td></td>
-								<td></td>
-								<td>
-									<p>
-										<strong><i class="fa fa-inr"></i> 65,500/-</strong>
-									</p>
-									<p>
-										<strong><i class="fa fa-inr"></i> 500/-</strong>
-									</p>
-									<p>
-										<strong><i class="fa fa-inr"></i> 1300/-</strong>
-									</p>
-									<p>
-										<strong><i class="fa fa-inr"></i> 9500/-</strong>
-									</p>
-								</td>
-							</tr>
+							{% endfor %}
 							<tr>
 								<td class="text-right">
 									<h2><strong>Total: </strong></h2>
@@ -233,7 +195,7 @@
 								<td></td>
 								<td></td>
 								<td class="text-left text-danger">
-									<h2><strong><i class="fa fa-inr"></i> 31.566/-</strong></h2>
+									<h2><strong><i class="fa fa-inr"></i> {{ total_price }}/-</strong></h2>
 								</td>
 							</tr>
 						</tbody>
@@ -244,18 +206,18 @@
 						<div class="col-xs-8 col-sm-8 col-md-8 text-left">
 							<div class="receipt-right">
 								<p><b>Date :</b> 15 Aug 2016</p>
-								<h5 style="color: rgb(140, 140, 140);">Thanks for shopping.!</h5>
+								<h5 style="color: rgb(140, 140, 140);"></h5>
 							</div>
 						</div>
-						<div class="col-xs-4 col-sm-4 col-md-4">
+						<!-- <div class="col-xs-4 col-sm-4 col-md-4">
 							<div class="receipt-left">
-								<h1>Stamp</h1>
-							</div>
-						</div>
+								<h1>Stamp</h1> -->
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
+	</div>
 	</div>
 	<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>

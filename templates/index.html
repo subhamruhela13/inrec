@@ -1,75 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice and Receipt Generator</title>
+    <title>Quotation Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <button type="button" class="btn btn-info" id="print">Print</button>
     <div class="container mt-5">
-        <h1 class="mb-4">Invoice and Receipt Generator</h1>
+        <h1 class="mb-4">Quotation Generator</h1>
         <div class="mb-3">
             <label for="customerName" class="form-label">Customer Name</label>
-            <input type="text" class="form-control" id="customerName" placeholder="Enter customer name">
+            <input type="text" class="form-control" id="customerName" placeholder="Enter customer name"><br>
+            <label for="customerNumber" class="form-label">Customer Mobile No</label>
+            <input type="number" class="form-control" id="customerNumber"
+                placeholder="Enter customer mobile number"><br>
+            <label for="customerEmail" class="form-label">Customer Email</label>
+            <input type="email" class="form-control" id="customerEmail" placeholder="Enter customer email"><br>
+            <label for="customerAdd" class="form-label">Customer Address</label>
+            <input type="text" class="form-control" id="customerAdd" placeholder="Enter customer address"><br>
         </div>
-        <div class="mb-3">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" class="form-control" id="amount" placeholder="Enter amount">
+        <!-- <hr> -->
+        <br><br>
+        <div class="mb-3" id="products">
+            <h2>Products</h2>
+            <div class="product">
+                <label for="ProdDesc" class="form-label">Description</label>
+                <input type="text" class="form-control" id="ProdDesc" placeholder="Enter Product Description">
+                <label for="Qty" class="form-label">Qty</label>
+                <input type="number" class="form-control" id="Qty" placeholder="Enter Qty">
+                <label for="Rate" class="form-label">Rate</label>
+                <input type="number" class="form-control" id="Rate" placeholder="Enter Rate/-">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="amount" placeholder="Enter amount">
+            </div>
         </div>
-        <button type="button" class="btn btn-primary" id="createInvoice">Create Invoice</button>
+        <button type="button" class="btn btn-primary" id="addProduct">Add Product</button>
+        <br>
+        <hr>
+        <br>
+        <button type="button" class="btn btn-primary" id="createQuotation">Create Quotation</button>
         <button type="button" class="btn btn-success" id="createReceipt">Create Receipt</button>
         <button type="button" class="btn btn-info" id="print">Print</button>
-        <hr>
-        <h2>Invoices</h2>
-        <ul id="invoiceList"></ul>
-        <h2>Receipts</h2>
-        <ul id="receiptList"></ul>
+        <br>
+        <h2>Quotations</h2>
+        <ul id="QuotationList"></ul>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('createInvoice').addEventListener('click', function() {
+        document.getElementById('addProduct').addEventListener('click', function () {
+            let productDiv = document.createElement('div');
+            productDiv.className = 'product';
+            productDiv.innerHTML = `
+                <label for="ProdDesc" class="form-label">Description</label>
+                <input type="text" class="form-control" name="ProdDesc" placeholder="Enter Product Description">
+                <label for="Qty" class="form-label">Qty</label>
+                <input type="number" class="form-control" name="Qty" placeholder="Enter Qty">
+                <label for="Rate" class="form-label">Rate</label>
+                <input type="number" class="form-control" name="Rate" placeholder="Enter Rate/-">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" class="form-control" name="amount" placeholder="Enter amount">
+            `;
+            document.getElementById('products').appendChild(productDiv);
+        });
+
+        document.getElementById('createQuotation').addEventListener('click', function () {
             let customerName = document.getElementById('customerName').value;
-            let amount = document.getElementById('amount').value;
-            fetch('/create_invoice', {
+            let customerNumber = document.getElementById('customerNumber').value;
+            let customerEmail = document.getElementById('customerEmail').value;
+            let customerAdd = document.getElementById('customerAdd').value;
+            let products = [];
+            document.querySelectorAll('.product').forEach(product => {
+                let ProdDesc = product.querySelector('[name="ProdDesc"]').value;
+                let Qty = product.querySelector('[name="Qty"]').value;
+                let Rate = product.querySelector('[name="Rate"]').value;
+                let amount = product.querySelector('[name="amount"]').value;
+                products.push({ Prod_desc: ProdDesc, Qty: Qty, Rate: Rate, amount: amount });
+            });
+
+            fetch('/create_quotation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     customer_name: customerName,
-                    amount: amount
+                    customer_number: customerNumber,
+                    customer_email: customerEmail,
+                    customer_add: customerAdd,
+                    products: products
                 })
             }).then(response => response.json())
-              .then(data => {
-                  document.getElementById('invoiceList').innerHTML += `<li>Invoice ID: ${data.id}, Customer Name: ${data.customer_name}, Amount: ${data.amount}</li>`;
-              });
+                .then(data => {
+                    document.getElementById('QuotationList').innerHTML += `<li>Quotation ID: ${data.id}, Customer Name: ${data.customer_name}, Amount: ${data.amount}</li>`;
+                });
         });
 
-        document.getElementById('createReceipt').addEventListener('click', function() {
-            let customerName = document.getElementById('customerName').value;
-            let amountPaid = document.getElementById('amount').value;
-            fetch('/create_receipt', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    customer_name: customerName,
-                    amount_paid: amountPaid
-                })
-            }).then(response => response.json())
-              .then(data => {
-                  document.getElementById('receiptList').innerHTML += `<li>Receipt ID: ${data.id}, Customer Name: ${data.customer_name}, Amount Paid: ${data.amount_paid}</li>`;
-              });
-        });
+        // document.getElementById('createQuotation').addEventListener('click', function () {
+        //     let customerName = document.getElementById('customerName').value;
+        //     let customerNumber = document.getElementById('customerNumber').value;
+        //     let customerEmail = document.getElementById('customerEmail').value;
+        //     let customerAdd = document.getElementById('customerAdd').value;
+        //     let products = [];
+        //     document.querySelectorAll('.product').forEach(product => {
+        //         let ProdDesc = product.querySelector('[name="ProdDesc"]').value;
+        //         let Qty = product.querySelector('[name="Qty"]').value;
+        //         let Rate = product.querySelector('[name="Rate"]').value;
+        //         let amount = product.querySelector('[name="amount"]').value;
+        //         products.push({ Prod_desc: ProdDesc, Qty: Qty, Rate: Rate, amount: amount });
+        //     });
+        //     // let ProdDesc = document.getElementById('ProdDesc').value;
+        //     // let Qty = document.getElementById('Qty').value;
+        //     // let Rate = document.getElementById('Rate').value;
+        //     // let amount = document.getElementById('amount').value;
 
-        document.getElementById('print').addEventListener('click', function() {
+        //     fetch('/create_quotation', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({
+        //             customer_name: customerName,
+        //             customer_number: customerNumber,
+        //             customer_email: customerEmail,
+        //             customer_add: customerAdd,
+        //             products: products
+        //             // Prod_desc: ProdDesc,
+        //             // Qty: Qty,
+        //             // Rate: Rate,
+        //             // amount: amount
+        //         })
+        //     }).then(response => response.json())
+        //         .then(data => {
+        //             document.getElementById('QuotationList').innerHTML += `<li>Invoice ID: ${data.id}, Customer Name: ${data.customer_name}, Amount: ${data.amount}</li>`;
+        //         });
+        // });
+
+        document.getElementById('print').addEventListener('click', function () {
             window.print();
         });
     </script>
 </body>
-</html>
 
+</html>
